@@ -17,7 +17,7 @@ log() {
     else 
         if [  $respuesta == 0  ]; then
             color=$RED
-            respuesta=nok
+            respuesta=error
         fi
     fi
 
@@ -26,3 +26,27 @@ log() {
     #     exit 1
     # fi
 }
+
+checkInternet() {
+    if ping -c1 google.com &> /dev/null; then
+        echo 1;
+    fi
+
+    echo 0
+}
+
+checkDir() {
+    local dir=${1:?Debe proveer un argumento.}
+    
+    if [[ -f "$dir" ]]; then
+        echo 1
+    fi
+
+    echo 0
+}
+
+log $(checkDir /etc/passwd2) Checkeando directorio
+log $(checkInternet) Checkeando interntet
+log $(checkDir /etc/passwd) Checkeando directorio
+
+6 7 

@@ -1,6 +1,10 @@
 #!/bin/bash
 
-# Variables
+RED='\033[0;31m'
+BLUE="\033[0;34m"
+GREEN="\033[0;32m"
+NC='\033[0m' # No Color
+
 keys=es
 chr=chroot.sh
 pckgs=pckgs
@@ -10,34 +14,75 @@ home=/dev/nvme0n1p3
 swap=/dev/nvme0n1p4
 uefi=true
 
-RED='\033[0;31m'
-BLUE="\033[0;34m"
-GREEN="\033[0;32m"
-NC='\033[0m' # No Color
-verbose=true
-
 log() {
-    if [  $verbose = true  ]; then
-        type=$1
-        msg=$2
-        time=$(date '+%d/%m/%Y %H:%M:%S')
-        color=$BLUE
+    respuesta=$1
+    msg=$2
+    time=$(date '+%d/%m/%Y %H:%M:%S')
+    color=$BLUE
 
-        if [  $type = "ok"  ]; then
-            color=$GREEN
-        else 
-            if [  $type = "error"  ]; then
-                color=$RED
-            fi
+    if [  $respuesta == 1  ]; then
+        color=$GREEN
+        respuesta=ok
+    else 
+        if [  $respuesta == 0  ]; then
+            color=$RED
+            respuesta=error
         fi
+    fi
 
-        echo -e "$time ${color}[$type]${NC} $msg"
-        if [  $type = "error"  ]; then
-            exit 1
-        fi
+    echo -e "$time $msg... ${color}[$respuesta]${NC}"
+    # if [  $respuesta = "error"  ]; then
+    #     exit 1
+    # fi
+}
+
+checkInternet() {
+    if ping -c1 google.com &> /dev/null; then
+        echo 1;
+    fi
+
+    echo 0
+}
+
+checkDir() {
+    local dir=${1:?Debe proveer un argumento.}
+    
+    if [[ -d "$dir" ]]; then
+        echo 1;
+    else
+        echo 0;
     fi
 }
 
+checkDirInv() {
+    local dir=${1:?Debe proveer un argumento.}
+    
+    if [[ -d "$dir" ]]; then
+        echo 0;
+    else
+        echo 1;
+    fi
+}
+
+checkFile() {
+    local dir=${1:?Debe proveer un argumento.}
+    
+    if [[ -f "$dir" ]]; then
+        echo 1;
+    else
+        echo 0;
+    fi
+}
+
+checkFileInv() {
+    local dir=${1:?Debe proveer un argumento.}
+    
+    if [[ -f "$dir" ]]; then
+        echo 0;
+    else
+        echo 1;
+    fi
+}
 
 # Formato y administración de discos.
 # Esta función presupone el siguiente particionado de disco:
@@ -49,75 +94,57 @@ log() {
 
 # Se puede obtener con el comando cfdisk antes de ejecutar el script.
 # !Función pendiente de automatizar.
-function adminDiscos {
-    log info "Iniciando administración de discos"
+adminDiscos() {
     if [  $uefi = true ]; then
-        mkfs.vfat -F32 $boot
-        log ok "$boot BOOT formateado en modo UEFI "
+        mkfs.vfat -F32 $boot &> /dev/null
+        log 1 "$boot BOOT formateado en modo UEFI "
     else
-        mkfs.ext2 $boot
-        log ok "$boot BOOT formateado en modo BIOS "
+        mkfs.ext2 $boot &> /dev/null
+        log 1 "$boot BOOT formateado en modo BIOS "
     fi
-
-    mkfs.ext4 $root
-    log ok "$root ROOT formateado"
-    mkfs.ext4 $home
-    log ok "$home HOME formateado"
-    mkswap $swap
-    swapon $swap
-    log ok "$swap SWAP configurado"
-    mount $root /mnt
-    log ok "$root ROOT montado en /mnt"
-
+    mkfs.ext4 $root &> /dev/null
+    log 1 "$root ROOT formateado"
+    mkfs.ext4 $home &> /dev/null
+    log 1 "$home HOME formateado"
+    mkswap $swap &> /dev/null
+    swapon $swap &> /dev/null
+    log 1 "$swap SWAP configurado"
+    mount $root /mnt &> /dev/null
+    log 1 "$root ROOT montado en /mnt"
     if [  $uefi = true ]; then
-        mkdir -p /mnt/boot/efi
-        mount $boot /mnt/boot/efi
-        log ok "$boot BOOT montado en /mnt/boot/efi (UEFI)"
+        mkdir -p /mnt/boot/efi &> /dev/null
+        mount $boot /mnt/boot/efi &> /dev/null
+        log 1 "$boot BOOT montado en /mnt/boot/efi (UEFI)"
     else
-        mkdir /mnt/boot
-        mount $boot /mnt/boot
-        log ok "$boot BOOT montado en /mnt/boot (BIOS)"
+        mkdir /mnt/boot &> /dev/null
+        mount $boot /mnt/boot &> /dev/null
+        log 1 "$boot BOOT montado en /mnt/boot (BIOS)"
     fi
-
-    mkdir /mnt/home
-    mount $home /mnt/home
-    log ok "$home HOME montado en /mnt/home"
+    mkdir /mnt/home &> /dev/null
+    mount $home /mnt/home &> /dev/null
+    log 1 "$home HOME montado en /mnt/home"
 }
 
-# Instalación base del sistema operativo y generación del fstab.
-# !Pendiente de extraer los paquetes para una mayor escala y abtracción.
-function instalacionBase {
-    log info "Inicialización e instalación de sistema base"
+instalacionBase() {
+    log 1 "Inicialización e instalación de sistema base"
     pacstrap /mnt base base-devel grub ntfs-3g networkmanager efibootmgr gvfs gvfs-mtp xdg-user-dirs nano wpa_supplicant dialog xf86-input-synaptics linux linux-firmware dhcpcd
     if [  $uefi = true ]; then
-        pacstrap /mnt efibootmgr
+        pacstrap /mnt efibootmgr 
     fi
     genfstab -U -p /mnt >> /mnt/etc/fstab
 }
 
-# Acceso a jaula chroot de carpeta root del sistema (/mnt)
-function jaulaChroot {
+jaulaChroot() {
     cp $chr /mnt
     cp $pckgs /mnt
     chmod +x /mnt/$chr
     arch-chroot /mnt ./$chr
-    umount /mnt/boot
-    umount /mnt/home
-    umount /mnt
+    umount /mnt/boot &> /dev/null
+    umount /mnt/home &> /dev/null
+    umount /mnt &> /dev/null
 }
 
-# Guión
-loadkeys $keys
 adminDiscos
-conexion=false
-while [  $conexion = false ]; do
-    if ping -c1 google.com &> /dev/null; then
-        log ok "Conexión correcta";
-        conexion=true;
-    else
-	    wifi-menu;
-    fi
-done
+log $(checkInternet) Checkeando internet
 instalacionBase
-#jaulaChroot
-#reboot
+jaulaChroot

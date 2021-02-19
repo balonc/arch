@@ -117,11 +117,11 @@ adminDiscos() {
 
 instalacionBase() {
     log 1 "Inicialización e instalación de sistema base"
-    pacstrap /mnt base base-devel grub ntfs-3g networkmanager efibootmgr gvfs gvfs-mtp xdg-user-dirs nano wpa_supplicant dialog xf86-input-synaptics linux linux-firmware dhcpcd &> /dev/null
+    pacstrap /mnt base base-devel grub ntfs-3g networkmanager efibootmgr gvfs gvfs-mtp xdg-user-dirs nano wpa_supplicant dialog xf86-input-synaptics linux linux-firmware dhcpcd
     if [  $uefi = true ]; then
-        pacstrap /mnt efibootmgr &> /dev/null
+        pacstrap /mnt efibootmgr 
     fi
-    genfstab -U -p /mnt >> /mnt/etc/fstab &> /dev/null
+    genfstab -U -p /mnt >> /mnt/etc/fstab
 }
 
 jaulaChroot() {
@@ -135,6 +135,6 @@ jaulaChroot() {
 }
 
 adminDiscos
-log $(heckInternet) Checkeando internet
+log $(checkInternet) Checkeando internet
 instalacionBase
-jaulaChroot
+#jaulaChroot

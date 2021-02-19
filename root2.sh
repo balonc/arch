@@ -84,6 +84,16 @@ checkFileInv() {
     fi
 }
 
+# Formato y administración de discos.
+# Esta función presupone el siguiente particionado de disco:
+
+#     boot /dev/sda1	  /boot	  150MB	*Bootable
+#     root /dev/sda2	  /	  –
+#     home /dev/sda3	  /home	  - 
+#     swap /dev/sda4	  /swap	  2GB	* Type: Linux Swap / Solaris
+
+# Se puede obtener con el comando cfdisk antes de ejecutar el script.
+# !Función pendiente de automatizar.
 adminDiscos() {
     if [  $uefi = true ]; then
         mkfs.vfat -F32 $boot &> /dev/null
@@ -125,10 +135,10 @@ instalacionBase() {
 }
 
 jaulaChroot() {
-    cp $chr /mnt &> /dev/null
-    cp $pckgs /mnt &> /dev/null
-    chmod +x /mnt/$chr &> /dev/null
-    arch-chroot /mnt ./$chr &> /dev/null
+    cp $chr /mnt
+    cp $pckgs /mnt
+    chmod +x /mnt/$chr
+    arch-chroot /mnt ./$chr
     umount /mnt/boot &> /dev/null
     umount /mnt/home &> /dev/null
     umount /mnt &> /dev/null
@@ -137,4 +147,4 @@ jaulaChroot() {
 adminDiscos
 log $(checkInternet) Checkeando internet
 instalacionBase
-#jaulaChroot
+jaulaChroot

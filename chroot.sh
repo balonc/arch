@@ -50,7 +50,8 @@ function installPckgs {
     #    # pacman -S - < pkglist.txt
 
     log info "Inicialización de instalación de paquetes"
-    pacman -Sy --noconfirm $(<pckgs)
+    #pacman -Sy --noconfirm $(<pckgs)
+    pacman -Sy --noconfirm $(grep -v '^#' pckgs)
 }
 
 
@@ -99,7 +100,6 @@ function configRed {
     systemctl enable NetworkManager.service
 }
 
-
 function configAUR {
     cd /tmp
     
@@ -117,7 +117,6 @@ function configAUR {
     yay -Syu
     log ok "yay instalado"
 }
-
 
 # Configuración de Grub
 function configGrub {

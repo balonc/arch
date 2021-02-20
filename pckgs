@@ -1,8 +1,11 @@
+# x graphic server
 xorg
 xorg-server
 xorg-xinit
 xorg-xbacklight
 numlockx
+
+# video drivers and gpu
 mesa
 mesa-demos
 xf86-video-intel
@@ -11,6 +14,7 @@ nvidia
 nvidia-utils
 nvidia-settings
 
+# system utility
 git
 tree
 wget
@@ -31,22 +35,24 @@ nethogs
 nmap
 screenfetch
 
-awesome
+# audio
 pulseaudio
 pulseaudio-alsa
 pavucontrol
 pamixer
+
+# battery
 acpi
 acpid
-termite
-compton
+
+# wm
 unclutter
 xbindkeys
 ttf-bitstream-vera
-
 rxvt-unicode
 urxvt-perls
 
+# media
 firefox
 firefox-i18n-es-es
 vlc
@@ -54,6 +60,7 @@ gimp
 libreoffice
 libreoffice-es
 
+# programming
 code
 python
 python-pip
@@ -63,9 +70,11 @@ texlive-most
 texlive-latexextra
 grc
 
+# cybersecurity
 nikto
 hydra
 metasploit
 gparted
 
+# gaming
 vbam-wx

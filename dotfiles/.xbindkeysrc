@@ -1,0 +1,22 @@
+## Para identificar teclas, comando 'xbindkeys -k'
+# ~/.xbindkeys
+## Volumen
+# Subir volumen
+"pamixer --increase 5"
+   XF86AudioRaiseVolume
+# Bajar volumen
+"pamixer --decrease 5"
+   XF86AudioLowerVolume
+# Volumen Mute
+"pamixer -t"
+   XF86AudioMute
+## Brillo
+# Subir brillo
+"brightnessctl --device=intel_backlight set +5%"
+   XF86MonBrightnessUp
+# Bajar brilo
+"brightnessctl --device=intel_backlight set 5%-"
+   XF86MonBrightnessDown
+# Captura de pantalla
+"scrot && notify-send 'Captura de pantalla tomada'"
+Print

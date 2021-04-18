@@ -33,7 +33,7 @@ nvtop
 traceroute
 nethogs
 nmap
-screenfetch
+neofetch
 
 # audio
 pulseaudio
@@ -57,24 +57,7 @@ firefox
 firefox-i18n-es-es
 vlc
 gimp
-libreoffice
-libreoffice-es
-
-# programming
-code
-python
-python-pip
-perl
-mariadb
-texlive-most
-texlive-latexextra
 grc
-
-# cybersecurity
-nikto
-hydra
-metasploit
-gparted
 
 # gaming
 vbam-wx

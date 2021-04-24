@@ -3,16 +3,12 @@ xorg
 xorg-server
 xorg-xinit
 xorg-xbacklight
-numlockx
 
 # video drivers and gpu
 mesa
 mesa-demos
 xf86-video-intel
 xf86-video-nouveau
-nvidia
-nvidia-utils
-nvidia-settings
 
 # system utility
 git
@@ -26,12 +22,8 @@ file-roller
 p7zip
 unrar
 unzip
-dpkg
 gnupg
 htop
-nvtop
-traceroute
-nethogs
 nmap
 neofetch
 
@@ -45,20 +37,17 @@ pamixer
 acpi
 acpid
 
-# wm
-unclutter
-xbindkeys
-ttf-bitstream-vera
+# urxvt
 rxvt-unicode
 urxvt-perls
 
 # media
 feh
-firefox
-firefox-i18n-es-es
 vlc
 gimp
 grc
+unclutter
+numlockx
+xbindkeys
 
-# gaming
-vbam-wx
+# ttf-bitstream-vera

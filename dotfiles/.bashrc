@@ -27,6 +27,7 @@ alias home='cd ~'
 alias e='emacs -nw'
 alias nano='emacs -nw'
 alias feh='feh -Z'
+alias surft='tabbed surf -e'
 
 # others aliases
 # alias desmume='desmume --fwlang=5'
